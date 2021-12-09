@@ -10,9 +10,12 @@ import Foundation
 
 
 struct WeatherManager {
+    
     let weather = "https://api.openweathermap.org/data/2.5/weather?units=metric&appid=d677d316193669d4e4926bf444bb4722"
     
     let temperature: Double?
+    
+    var weatherDelegate: WeatherProtocol?
     
     func fetchWeather(name: String){
         let locationWeather = "\(weather)&q=\(name)"
@@ -30,34 +33,36 @@ struct WeatherManager {
                 }
                 
                 if let newData = data{
-                    parceJSON(weatherData: newData)
+                    if let weather = parceJSON(weatherData: newData){
+                        weatherDelegate?.updateWeather(weather)
+                    }
+                   
                 }
             }
             task.resume()
         }
     }
     
-    func parceJSON(weatherData: Data){
+    func parceJSON(weatherData: Data) -> WeatherModel?{
         let decoder = JSONDecoder()
         do {
             let decodeData = try decoder.decode(WeatherData.self, from: weatherData)
             let id = decodeData.weather[0].id
+            let name = decodeData.name
+            let temp = decodeData.main.temp
+            let condition = WeatherModel(cityName: name, conditionId: id, temp: temp)
             print(id)
-            print(getConditionName(weatherId: id))
+            print(condition.temperature)
+            return condition
+           
         } catch {
             print(error)
+            return nil
         }
         
         
     }
     
-    func getConditionName(weatherId: Int) -> String {
-        
-//        switch weather {
-//            case 
-//        }
-        return "i dont have that number in the system"
-        
-    }
+    
     
 }
