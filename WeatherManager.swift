@@ -7,7 +7,11 @@
 //
 
 import Foundation
+import CoreLocation
 
+protocol WeatherProtocol {
+    func updateWeather(_ weather: WeatherModel)
+}
 
 struct WeatherManager {
     
@@ -17,9 +21,19 @@ struct WeatherManager {
     
     var weatherDelegate: WeatherProtocol?
     
+    
     func fetchWeather(name: String){
         let locationWeather = "\(weather)&q=\(name)"
         startSession(urlString: locationWeather)
+    }
+    
+    func fetchWeather(latitude: Double, longitude: Double){
+        print(latitude)
+        print(longitude)
+        let locationWeather = "\(weather)&lat=\(latitude)&lon=\(longitude)"
+        startSession(urlString: locationWeather)
+
+        
     }
     
     func startSession(urlString: String){
